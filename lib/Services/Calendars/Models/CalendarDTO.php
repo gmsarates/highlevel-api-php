@@ -130,14 +130,14 @@ class CalendarDTO
     public ?string $pre_buffer_unit = null;
 
     /**
-     * @var float|null
+     * @var string|null
      */
-    public ?float $appoinment_per_slot = null;
+    public ?string $appoinment_per_slot = null;
 
     /**
-     * @var float|null
+     * @var string|null
      */
-    public ?float $appoinment_per_day = null;
+    public ?string $appoinment_per_day = null;
 
     /**
      * @var float|null
