@@ -121,20 +121,25 @@ class Agents
      */
     public function searchAgents(array $params = [], ?array $options = null): SearchAgentsResponseDto
     {
+        $paramDefs = [
+            ['name' => 'startAfter', 'in' => 'query'],
+            ['name' => 'limit', 'in' => 'query'],
+            ['name' => 'query', 'in' => 'query'],
+        ];
+        $extracted = RequestUtils::extractParams($params, $paramDefs);
         $requirements = ["bearer"];
+        
         $url = RequestUtils::buildUrl('/conversation-ai/agents/search', []);
 
         $headers = array_merge(
             $options['headers'] ?? []
         );
 
-        $query = array_merge($params, $options['query'] ?? []);
-
         $authToken = RequestUtils::getAuthToken(
             $this->client,
             $requirements,
             $headers,
-            $query,
+            $extracted['query'],
             null,
             $options['preferredTokenType'] ?? null
         );
@@ -145,10 +150,10 @@ class Agents
 
         $requestOptions = [
             'headers' => $headers,
-            'query' => $query,
+            'query' => $extracted['query'],
             '_security_requirements' => $requirements,
             '_path_params' => [],
-            '_query_params' => $query,
+            '_query_params' => $extracted['query'],
         ];
 
         if ($options) {
