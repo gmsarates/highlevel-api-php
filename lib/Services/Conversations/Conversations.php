@@ -7,6 +7,7 @@ use HighLevel\GHLError;
 use HighLevel\Utils\RequestUtils;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use HighLevel\Services\Conversations\Contexts\ConversationAi\ConversationAi;
 use HighLevel\Services\Conversations\Models\SendConversationResponseDto;
 use HighLevel\Services\Conversations\Models\GetConversationByIdResponse;
 use HighLevel\Services\Conversations\Models\UpdateConversationDto;
@@ -44,6 +45,12 @@ class Conversations
     private HighLevel $client;
 
     /**
+     * Conversation AI endpoints grouped under Conversations for future expansion
+     * @var ConversationAi
+     */
+    public ConversationAi $conversationAi;
+
+    /**
      * Create a new Conversations service instance
      * 
      * @param HighLevel $client HighLevel client instance
@@ -51,6 +58,7 @@ class Conversations
     public function __construct(HighLevel $client)
     {
         $this->client = $client;
+        $this->conversationAi = new ConversationAi($client);
     }
 
     /**
@@ -1668,4 +1676,3 @@ class Conversations
     }
 
 }
-

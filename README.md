@@ -58,6 +58,24 @@ $contactsResponse = $ghl->contacts->searchContactsAdvanced($requestBody);
 error_log('Fetched contacts: ' . json_encode($contactsResponse, JSON_PRETTY_PRINT));
 ```
 
+### Conversation AI (Agents)
+
+```php
+use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\AgentRequestDto;
+
+// Search agents (query params are passed through as-is)
+$agents = $ghl->conversations->conversationAi->agents->searchAgents([
+    'locationId' => 'zBG0T99IsBgOoXUrcROH',
+    'query' => 'sales'
+]);
+
+// Create an agent (payload schema is flexible)
+$created = $ghl->conversations->conversationAi->agents->createAgent(new AgentRequestDto([
+    'locationId' => 'zBG0T99IsBgOoXUrcROH',
+    'name' => 'AI SDR'
+]));
+```
+
 ### OAuth Authentication
 
 ```php
@@ -218,4 +236,3 @@ This SDK is open-sourced software licensed under the [MIT license](LICENSE).
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
-
