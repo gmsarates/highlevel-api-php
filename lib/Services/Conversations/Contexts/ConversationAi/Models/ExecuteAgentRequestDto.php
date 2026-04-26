@@ -7,7 +7,7 @@ namespace HighLevel\Services\Conversations\Contexts\ConversationAi\Models;
  *
  * This DTO is used for the AI Agent Studio "Execute Agent" endpoint.
  * Required: locationId
- * Optional: executionId (for session continuation), input (string|object)
+ * Optional: executionId (for session continuation), message (string|object)
  *
  * @package HighLevel\Services\Conversations\Contexts\ConversationAi\Models
  */
@@ -20,10 +20,10 @@ class ExecuteAgentRequestDto
     public ?string $execution_id = null;
 
     /**
-     * Raw input payload (can be string or structured object)
+     * Raw message payload (can be string or structured object)
      * @var mixed
      */
-    public $input = null;
+    public $message = null;
 
     /**
      * Raw data storage
@@ -38,7 +38,7 @@ class ExecuteAgentRequestDto
     {
         $this->location_id = $data['locationId'] ?? $data['location_id'] ?? null;
         $this->execution_id = $data['executionId'] ?? $data['execution_id'] ?? null;
-        $this->input = $data['input'] ?? null;
+        $this->message = $data['message'] ?? null;
         $this->data = $data;
     }
 
@@ -59,8 +59,8 @@ class ExecuteAgentRequestDto
             $data['executionId'] = $data['execution_id'];
         }
 
-        if (!array_key_exists('input', $data) && $this->input !== null) {
-            $data['input'] = $this->input;
+        if (!array_key_exists('message', $data) && $this->message !== null) {
+            $data['message'] = $this->message;
         }
 
         // Also allow setting via convenience fields
