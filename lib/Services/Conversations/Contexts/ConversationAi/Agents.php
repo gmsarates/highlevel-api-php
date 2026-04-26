@@ -9,6 +9,8 @@ use HighLevel\HighLevel;
 use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\AgentRequestDto;
 use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\AgentResponseDto;
 use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\DeleteAgentResponseDto;
+use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\ExecuteAgentRequestDto;
+use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\ExecuteAgentResponseDto;
 use HighLevel\Services\Conversations\Contexts\ConversationAi\Models\SearchAgentsResponseDto;
 use HighLevel\Utils\RequestUtils;
 
@@ -390,5 +392,77 @@ class Agents
             throw new GHLError($e->getMessage(), $statusCode, $responseData, $requestOptions);
         }
     }
-}
 
+    /**
+     * Execute Agent (AI Agent Studio)
+     * POST /agent-studio/agent/:agentId/execute
+     *
+     * Required body params: locationId
+     * Optional body params: input, executionId
+     *
+     * @param array{agentId: string} $params Path params
+     * @param ExecuteAgentRequestDto $requestBody Request body (flexible schema)
+     * @param array<string, mixed>|null $options Additional request options
+     * @return ExecuteAgentResponseDto
+     * @throws GHLError
+     * @throws GuzzleException
+     */
+    public function executeAgent(array $params, ExecuteAgentRequestDto $requestBody, ?array $options = null): ExecuteAgentResponseDto
+    {
+        $requestArr = $requestBody->toRequestArray();
+
+        $paramDefs = [['name' => 'agentId', 'in' => 'path']];
+        $extracted = RequestUtils::extractParams($params, $paramDefs);
+        $requirements = ["bearer"];
+
+        $url = RequestUtils::buildUrl('/agent-studio/agent/{agentId}/execute', $extracted['path']);
+
+        $headers = array_merge(
+            $extracted['header'],
+            $options['headers'] ?? []
+        );
+
+        $authToken = RequestUtils::getAuthToken(
+            $this->client,
+            $requirements,
+            $headers,
+            $options['query'] ?? [],
+            $requestArr,
+            $options['preferredTokenType'] ?? null
+        );
+
+        if ($authToken) {
+            $headers['Authorization'] = $authToken;
+        }
+
+        $requestOptions = [
+            'headers' => $headers,
+            'query' => $options['query'] ?? [],
+            'json' => $requestArr,
+            '_security_requirements' => $requirements,
+            '_path_params' => $extracted['path'],
+            '_query_params' => $options['query'] ?? [],
+        ];
+
+        if ($options) {
+            foreach ($options as $key => $value) {
+                if (!in_array($key, ['headers', 'preferredTokenType', 'query'])) {
+                    $requestOptions[$key] = $value;
+                }
+            }
+        }
+
+        try {
+            $response = $this->client->getClient()->request('POST', $url, $requestOptions);
+            $body = (string) $response->getBody();
+            $responseData = json_decode($body, true) ?: [];
+            return new ExecuteAgentResponseDto($responseData);
+        } catch (RequestException $e) {
+            $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : null;
+            $responseBody = $e->hasResponse() ? (string) $e->getResponse()->getBody() : null;
+            $responseData = $responseBody ? json_decode($responseBody, true) : null;
+
+            throw new GHLError($e->getMessage(), $statusCode, $responseData, $requestOptions);
+        }
+    }
+}
