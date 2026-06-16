@@ -23,7 +23,7 @@
     "php": ">=7.4",
     "ext-json": "*",
     "guzzlehttp/guzzle": "^7.0",
-    "mongodb/mongodb": "^2.0"
+    "mongodb/mongodb": "^1.21"
   },
   "suggest": {
     "ext-curl": "Recommended for better HTTP performance with Guzzle",
